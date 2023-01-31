@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+    <title>Airtest Report </title>
+    
+    <!--[if lt IE 9]>
+    <script src="https://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link href="static//css/report.css" rel="stylesheet">
+
+    <script src="static//js/jquery-1.10.2.min.js"></script>
+    <script src="static//js/jquery-lang.js" charset="utf-8" type="text/javascript"></script>
+    <script src="static//js/langpack/zh_CN.js" charset="utf-8" type="text/javascript"></script>
+    <script src="static//js/lazyload.js" charset="utf-8" type="text/javascript"></script>
+    <script type="text/javascript">
+      data = {"steps": [{"title": "Touch", "time": 1674652964.907691, "code": {"name": "touch", "args": [{"key": "v", "value": {"filename": "tpl1673860094318.png", "_filepath": "test2.air\\tpl1673860094318.png", "threshold": 0.9, "target_pos": 5, "record_pos": [-0.439, -0.937], "resolution": [1080, 2340], "rgb": false, "scale_max": 800, "scale_step": 0.005, "__class__": "Template"}, "image": "tpl1673860094318.png", "resolution": [108, 102]}, {"key": "kwargs", "value": {}}, {"key": "times", "value": 1}]}, "screen": {"src": "log\\1674652963578.jpg", "rect": [{"left": 11, "top": 107, "width": 107, "height": 100}], "pos": [[64, 157]], "vector": [], "confidence": 0.9415213763713837, "resolution": [1080, 2340], "_filepath": "log\\1674652963578.jpg", "thumbnail": "log\\1674652963578_small.jpg"}, "desc": "\u70b9\u51fb \u76ee\u6807\u56fe\u7247", "traceback": "", "log": "", "assert": null}, {"title": "record_ui", "time": 1674652966.1817942, "code": {"name": "record_ui", "args": [{"key": "driver", "value": "{poco.drivers.android.uiautomation.AndroidUiautomationPoco object at 0x0000016788F6AF10}"}, {"key": "action", "value": "'click'"}, {"key": "ui", "value": "UIObjectProxy of \"com.elko.home:id/tv_close_left\""}, {"key": "args", "value": "[0.11018518518518519, 0.07777777777777778]"}]}, "screen": null, "desc": null, "traceback": "", "log": "", "assert": null}, {"title": "Touch", "time": 1674652966.4660318, "code": {"name": "touch", "args": [{"key": "v", "value": [119.0, 182.0]}, {"key": "kwargs", "value": {"duration": 0.01}}, {"key": "times", "value": 1}]}, "screen": {"src": "log\\1674652966227.jpg", "rect": [], "pos": [[119.0, 182.0]], "vector": [], "confidence": null, "resolution": [1080, 2340], "_filepath": "log\\1674652966227.jpg", "thumbnail": "log\\1674652966227_small.jpg"}, "desc": "\u70b9\u51fb \u5c4f\u5e55\u5750\u6807 [119.0, 182.0]", "traceback": "", "log": "", "assert": null}], "name": "C:\\automation_test_tool\\cases\\test2.air\\log\\3d9203f3\\test2.log", "scale": 0.5, "test_result": true, "run_end": 1674652966.4660318, "run_start": 1674652963.064307, "static_root": "static//", "lang": "zh", "records": [], "info": {"name": "test2.py", "path": "C:\\automation_test_tool\\cases\\test2.air\\log\\3d9203f3\\test2.log\\test2.py", "author": "SESA666275", "title": "", "desc": ""}, "log": "log\\log.txt", "console": ""};
+      lang = new Lang();
+      lang.init({
+        defaultLang: 'en',
+        currentLang: 'zh'
+      });
+    </script>
+  </head>
+
+  <body>
+
+    <div class="container-fluid">
+      <div class="row">
+        
+        <div id="main" class="main col-md-12">
+          <div id="back_multi"></div>
+          <h1 class="title">Airtest Report </h1>
+          
+          <div class="summary" >
+
+            <div class="show-horizontal">
+              <div class="info info1">
+                <div class="info-left">
+                  <img id='result-img' />
+                </div>
+                <div class="info-right">
+                  <div class="info-title"><span lang='en'>Airtest Report</span>
+                    <label id='result-desc' lang="en"></label>
+                  </div>
+                  <div class="info-content">
+                    <div class='info-sub start'></div>
+                    <div class='info-sub time'></div>
+                  </div>
+                  <div class="info-toal">
+                    <div class="info-step">
+                      <span class="info-name" lang="en">Steps: </span>
+                      <span class="info-value">3</span>
+                    </div>
+                    <div class="info-time">
+                      <span class="info-name" lang="en">Time: </span>
+                      <span class="info-value duration">xxx</span>
+                    </div>
+                    
+                    
+                    <div class="info-log">
+                      <span class="info-name" lang="en">Log: </span>
+                      <span class="info-value log">
+                        <a href="log\log.txt" target="_blank" download="log.txt">log.txt <img src="static//image/download_log.svg" /></a>
+                      </span>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              <div class="info info2">
+                <div class="info-left"></div>
+                <div class="info-right">
+                  <div class="info-title"><span lang='en'>Executors</span></div>
+                  <div class="info-content">
+                    <div class="info-execute">
+                      <div class="circle-img"></div>
+                      
+                        <div class="info-name"><span lang="en">Author:</span> SESA666275</div>
+                      
+                    </div>
+                    <div class="info-execute">
+                      <div class="circle-img"></div>
+                      <div class="info-file" title="C:\automation_test_tool\cases\test2.air\log\3d9203f3\test2.log\test2.py">test2.py
+                        <img id="copy_path" path="C:\automation_test_tool\cases\test2.air\log\3d9203f3\test2.log\test2.py" title="copy file path to clipboard" src="static//image/copy.svg" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            
+          </div>
+          <div class="device" id='device'>
+          </div>
+          <!-- 可以额外显示自定义模块，支持插入Html内容 -->
+          
+          <div class="gallery">
+            <div class="info-title"><span lang="en">Quick view</span></div>
+            <div class="content">
+            </div>
+          </div>
+
+          <!--单步-->
+          
+          
+          <div class="steps">
+            <div class="content">
+              <div class="steps-head">
+                <div class="head-left">
+                  <div class="order" id='order'><span lang="en">order</span></div>
+                  <div class="order" id='duration'><span lang="en">duration</span></div>
+                  <div class="order" id='status'><span lang="en">status</span></div>
+                </div>
+                <div class="head-right">
+                  <span lang="en" class="jump-wrong" id='jump-wrong'>Jump to wrong step</span>
+                  <span lang="en">Filter by:</span>
+                  <span class="filters">
+                    <span lang="en" class="filter" id="all" alt="show all steps">All</span>
+                    <span lang="en" class="filter" id='success' alt="show success steps only">Success</span>
+                    <span lang="en" class="filter" id='fail' alt="show failed steps only">Failed</span>
+                    <span lang="en" class="filter" id="assert" alt="show steps with assertion only">Assert</span>
+                  </span>
+                </div>
+              </div>
+              <div class="steps-content">
+                <div class="step-left" id='step-left'>
+                  <div class="step-list"></div>
+                  <div id="pageTool"></div>
+                </div>
+                <div class="step-right" id='step-right'></div>
+              </div>
+            </div>
+            
+            </div>
+        </div>
+        
+      
+      <div class="footer">
+        <div class="footer-content">
+          <div class="foo">
+            <div class="interfaces">
+              <a class="icon" href="https://github.com/AirtestProject/Airtest"  target="_blank">
+                <img src="static//image/Airtest.png" alt="airtest">
+              </a>
+              <a class="icon" href="https://github.com/AirtestProject/poco"  target="_blank">
+                <img src="static//image/poco.png" alt="Poco">
+              </a>
+            </div>
+          </div>
+          <div class="foo">
+            <div class="apps">
+              <a class="icon ide" href="http://airtest.netease.com/"  target="_blank">
+                <img src="static//image/AirtestIDE.png" alt="AirtestIDE">
+              </a>
+              <a class="icon" href="https://airlab.163.com/"  target="_blank">
+                <img src="static//image/AirLab.png" alt="AirLab">
+              </a>
+            </div>
+          </div>
+          <div class="foo">
+            <div class="corp">
+                <img src="static//image/netease.png" alt="NetEase">
+                <span lang="en">© 1997 - 2020 NetEase, Inc. All Rights Reserved.</span>
+            </div>
+          </div>
+        </div>
+      </div> 
+      
+      </div>
+      <!-- 录屏 -->
+      <div class="row gif-wrap show">
+          <div class="menu">
+            <div class="pattern pattern1">
+              <div class="minimize">
+                <img title="minimize" src="static//image/minimize.svg" />
+              </div>
+              <div class="close">
+                <img title="close" src="static//image/close.svg" />
+              </div>
+            </div>
+            <div class="pattern pattern2">
+              <div class="maximize">
+                <img title="maximize" src="static//image/maximize.svg" />
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            
+          </div>
+        </div>
+        <!-- max pic -->
+      <div id='magnify' class="mask hide">
+        <div class="content">
+        </div>
+      </div>
+    </div>
+
+  <link href="static//css/monokai_sublime.min.css" rel="stylesheet">
+  <script src="static//js/highlight.min.js"></script>
+  <script type="text/javascript" src="static//js/paging.js"></script>
+  <script src="static//js/report.js"></script>
+</body>
+</html>
