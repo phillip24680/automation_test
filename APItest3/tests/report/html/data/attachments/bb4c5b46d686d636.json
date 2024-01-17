@@ -1,0 +1,9 @@
+[
+    {
+        "id": "bf7b6349e2e3e2231afsb9",
+        "label": "Main incomer",
+        "family": "grid",
+        "controllable": false,
+        "protocol": "Zigbee"
+    }
+]

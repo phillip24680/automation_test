@@ -1,0 +1,35 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "name" : "packages",
+  "children" : [ {
+    "name" : "test_gwyc_api_all2",
+    "children" : [ {
+      "name" : "case_001 Returns the electrical contract of the site",
+      "uid" : "9a85c0220d2d6027",
+      "parentUid" : "737530afda653bcfa84257a1f1927581",
+      "status" : "passed",
+      "time" : {
+        "start" : 1679128338426,
+        "stop" : 1679128339350,
+        "duration" : 924
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'用例ID': 'case_001', '用例模块': '活动管理', '用例名称': 'Returns the electrical contract of the site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/contract', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': '', '状态码': '200', '期望结果': 'NOK', '期望响应时间': 5.0}", "'case_001 Returns the electrical contract of the site'" ]
+    }, {
+      "name" : "case_002 Returns the list of equipments of a site",
+      "uid" : "37a68b3549c390cc",
+      "parentUid" : "737530afda653bcfa84257a1f1927581",
+      "status" : "passed",
+      "time" : {
+        "start" : 1679128339357,
+        "stop" : 1679128340009,
+        "duration" : 652
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "{'用例ID': 'case_002', '用例模块': '活动管理', '用例名称': 'Returns the list of equipments of a site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/equipments', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': 'y', '状态码': '200', '期望结果': 'label', '期望响应时间': 5.0}", "'case_002 Returns the list of equipments of a site'" ]
+    } ],
+    "uid" : "737530afda653bcfa84257a1f1927581"
+  } ]
+}

@@ -1,0 +1,21 @@
+[ {
+  "uid" : "9a85c0220d2d6027",
+  "name" : "case_001 Returns the electrical contract of the site",
+  "time" : {
+    "start" : 1679128338426,
+    "stop" : 1679128339350,
+    "duration" : 924
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "37a68b3549c390cc",
+  "name" : "case_002 Returns the list of equipments of a site",
+  "time" : {
+    "start" : 1679128339357,
+    "stop" : 1679128340009,
+    "duration" : 652
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

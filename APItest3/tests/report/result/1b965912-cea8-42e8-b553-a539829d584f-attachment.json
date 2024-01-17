@@ -1,0 +1,18 @@
+[
+    {
+        "id": "bf7b6349e2e3e2231afsb9",
+        "label": "Main incomer",
+        "family": "grid",
+        "controllable": false,
+        "protocol": "Zigbee"
+    },
+    {
+        "id": "bf006b76a4f17710ebnvzv",
+        "label": "Heating pte2",
+        "family": "heating",
+        "tags": [
+            "heating"
+        ],
+        "creationDate": "2023-04-18T04:32:40.584+02:00"
+    }
+]

@@ -1,0 +1,104 @@
+{
+  "uid" : "37a68b3549c390cc",
+  "name" : "case_002 Returns the list of equipments of a site",
+  "fullName" : "test_gwyc_api_all2#test_api",
+  "historyId" : "2fddabaec4f82660508832143b9c381c",
+  "time" : {
+    "start" : 1679128339357,
+    "stop" : 1679128340009,
+    "duration" : 652
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "token",
+    "time" : {
+      "start" : 1679128337348,
+      "stop" : 1679128338425,
+      "duration" : 1077
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "shouldDisplayMessage" : false,
+    "attachmentsCount" : 0,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ {
+      "uid" : "be625d5e61eaa6fb",
+      "name" : "接口响应时间",
+      "source" : "be625d5e61eaa6fb.attach",
+      "type" : "text/plain",
+      "size" : 28
+    }, {
+      "uid" : "bb4c5b46d686d636",
+      "name" : "接口响应内容",
+      "source" : "bb4c5b46d686d636.json",
+      "type" : "application/json",
+      "size" : 174
+    } ],
+    "parameters" : [ ],
+    "shouldDisplayMessage" : false,
+    "attachmentsCount" : 2,
+    "stepsCount" : 0,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "tag",
+    "value" : "@pytest.mark.usefixtures('token')"
+  }, {
+    "name" : "suite",
+    "value" : "test_gwyc_api_all2"
+  }, {
+    "name" : "host",
+    "value" : "DESKTOP-EADP683"
+  }, {
+    "name" : "thread",
+    "value" : "7480-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_gwyc_api_all2"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "data",
+    "value" : "{'用例ID': 'case_002', '用例模块': '活动管理', '用例名称': 'Returns the list of equipments of a site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/equipments', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': 'y', '状态码': '200', '期望结果': 'label', '期望响应时间': 5.0}"
+  }, {
+    "name" : "title",
+    "value" : "'case_002 Returns the list of equipments of a site'"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ {
+      "uid" : "4a1ec70335101452",
+      "status" : "passed",
+      "time" : {
+        "start" : 1678810466767,
+        "stop" : 1678810469985,
+        "duration" : 3218
+      }
+    } ],
+    "categories" : [ ],
+    "tags" : [ "@pytest.mark.usefixtures('token')" ]
+  },
+  "source" : "37a68b3549c390cc.json",
+  "parameterValues" : [ "{'用例ID': 'case_002', '用例模块': '活动管理', '用例名称': 'Returns the list of equipments of a site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/equipments', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': 'y', '状态码': '200', '期望结果': 'label', '期望响应时间': 5.0}", "'case_002 Returns the list of equipments of a site'" ]
+}

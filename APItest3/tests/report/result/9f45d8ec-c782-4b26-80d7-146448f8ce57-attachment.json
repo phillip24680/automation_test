@@ -1,0 +1,19 @@
+{
+    "selfConsumption": true,
+    "currency": "NOK",
+    "subscription": 7.0,
+    "subscriptionType": "Weekly",
+    "unit": "kWh",
+    "consumption": {
+        "tariffType": "dynamic",
+        "source": "Module:NordPool",
+        "baseTariff": 0.0,
+        "limit": 63.0,
+        "limitUnit": "A"
+    },
+    "production": {
+        "tariffType": "no-tariff",
+        "source": "Custom",
+        "baseTariff": 0.0
+    }
+}

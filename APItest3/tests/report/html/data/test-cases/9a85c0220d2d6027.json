@@ -1,0 +1,104 @@
+{
+  "uid" : "9a85c0220d2d6027",
+  "name" : "case_001 Returns the electrical contract of the site",
+  "fullName" : "test_gwyc_api_all2#test_api",
+  "historyId" : "68936aa1d84a1d9d7df0791f64626426",
+  "time" : {
+    "start" : 1679128338426,
+    "stop" : 1679128339350,
+    "duration" : 924
+  },
+  "status" : "passed",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ {
+    "name" : "token",
+    "time" : {
+      "start" : 1679128337348,
+      "stop" : 1679128338425,
+      "duration" : 1077
+    },
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ ],
+    "parameters" : [ ],
+    "shouldDisplayMessage" : false,
+    "attachmentsCount" : 0,
+    "stepsCount" : 0,
+    "hasContent" : false
+  } ],
+  "testStage" : {
+    "status" : "passed",
+    "steps" : [ ],
+    "attachments" : [ {
+      "uid" : "3205a6e9cea002ae",
+      "name" : "接口响应时间",
+      "source" : "3205a6e9cea002ae.attach",
+      "type" : "text/plain",
+      "size" : 28
+    }, {
+      "uid" : "5a61c75dc99e81df",
+      "name" : "接口响应内容",
+      "source" : "5a61c75dc99e81df.json",
+      "type" : "application/json",
+      "size" : 422
+    } ],
+    "parameters" : [ ],
+    "shouldDisplayMessage" : false,
+    "attachmentsCount" : 2,
+    "stepsCount" : 0,
+    "hasContent" : true
+  },
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "tag",
+    "value" : "@pytest.mark.usefixtures('token')"
+  }, {
+    "name" : "suite",
+    "value" : "test_gwyc_api_all2"
+  }, {
+    "name" : "host",
+    "value" : "DESKTOP-EADP683"
+  }, {
+    "name" : "thread",
+    "value" : "7480-MainThread"
+  }, {
+    "name" : "framework",
+    "value" : "pytest"
+  }, {
+    "name" : "language",
+    "value" : "cpython3"
+  }, {
+    "name" : "package",
+    "value" : "test_gwyc_api_all2"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ {
+    "name" : "data",
+    "value" : "{'用例ID': 'case_001', '用例模块': '活动管理', '用例名称': 'Returns the electrical contract of the site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/contract', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': '', '状态码': '200', '期望结果': 'NOK', '期望响应时间': 5.0}"
+  }, {
+    "name" : "title",
+    "value" : "'case_001 Returns the electrical contract of the site'"
+  } ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ {
+      "uid" : "95c1bed15c613d55",
+      "status" : "passed",
+      "time" : {
+        "start" : 1678810464457,
+        "stop" : 1678810466737,
+        "duration" : 2280
+      }
+    } ],
+    "categories" : [ ],
+    "tags" : [ "@pytest.mark.usefixtures('token')" ]
+  },
+  "source" : "9a85c0220d2d6027.json",
+  "parameterValues" : [ "{'用例ID': 'case_001', '用例模块': '活动管理', '用例名称': 'Returns the electrical contract of the site', '用例地址': 'https://fdcs-pp.wiser.schneider-electric.com/eec//v1/sites/EU69218169/contract', '请求方式': 'get', '请求类型': '', '请求参数': '', '请求头': '{\"Content-Type\":\"application/json\"}', '前置条件': '', '是否执行': '', '状态码': '200', '期望结果': 'NOK', '期望响应时间': 5.0}", "'case_001 Returns the electrical contract of the site'" ]
+}
