@@ -16,6 +16,11 @@ from PyQt5.QtCore import QThread, pyqtSignal
 
 from PyQt5.QtGui import QIcon
 
+from PyQt5.QtGui import QTextCharFormat, QTextCursor, QTextDocument
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import os
+
 
 class ExecuteProcessThread(QThread):
     progress_updated = pyqtSignal(int)
@@ -31,16 +36,10 @@ class ExecuteProcessThread(QThread):
         process = subprocess.Popen([self.exe_name] + self.args, cwd=".")
         return_code = process.wait()
 
-        # 根据返回码判断进程是否成功完成
-        # if return_code == 0:
-        #     self.process_finished.emit(True)
-        # else:
-        #     self.process_finished.emit(False)
-
 class PhotoViewerDialog(QDialog):
     def __init__(self, photo_path, description_text, parent=None):
         super(PhotoViewerDialog, self).__init__(parent)
-        self.setWindowTitle("Photo Viewer")
+        self.setWindowTitle("ITF Team Photo")
 
         # 加载图片
         photo_label = QLabel()
@@ -62,6 +61,9 @@ class PhotoViewerDialog(QDialog):
         self.description_text_edit.setPlainText(description_text)
         self.description_text_edit.setReadOnly(True)
 
+        # 设置文字格式
+        self.set_text_format()
+
         # 创建垂直布局
         v_layout = QVBoxLayout()
         v_layout.addLayout(scroll_area)
@@ -72,12 +74,42 @@ class PhotoViewerDialog(QDialog):
         # 设置定时器，每隔一段时间滚动文字
         self.scroll_timer = QTimer(self)
         self.scroll_timer.timeout.connect(self.scroll_description)
-        self.scroll_timer.start(2000)  # 设置滚动间隔为 1 秒
+        self.scroll_timer.start(2500)  # 设置滚动间隔为 3 秒
+
+    def set_text_format(self):
+        cursor = self.description_text_edit.textCursor()
+
+        # 设置加粗
+        format_bold = QTextCharFormat()
+        #format_bold.setFontWeight(QFont.Bold)
+        cursor.setPosition(0)
+        cursor.movePosition(QTextCursor.End, QTextCursor.KeepAnchor)
+        cursor.mergeCharFormat(format_bold)
+
+        # 设置颜色为紫色
+        format_purple = QTextCharFormat()
+        format_purple.setForeground(Qt.magenta)
+        cursor.mergeCharFormat(format_purple)
+
+        # 设置文字的字体和大小
+        font = QFont("Microsoft YaHei", 10)  # 设置字体为微软雅黑，大小为10
+        self.description_text_edit.setFont(font)
+
+        # 将背景颜色更改为更淡的蓝色
+        self.description_text_edit.setStyleSheet("background-color: #FFFFE0;")
 
     def scroll_description(self):
-        # 每次滚动一行文字
         current_scroll_value = self.description_text_edit.verticalScrollBar().value()
-        self.description_text_edit.verticalScrollBar().setValue(current_scroll_value + 20)
+        max_scroll_value = self.description_text_edit.verticalScrollBar().maximum()
+
+        # 如果当前滚动值已经是最底部，则滑动到最顶部
+        if current_scroll_value == max_scroll_value:
+            # 滑动到最顶部
+            self.description_text_edit.verticalScrollBar().setValue(0)
+        else:
+            # 滑动到下一步位置
+            self.description_text_edit.verticalScrollBar().setValue(current_scroll_value + 10)
+
 
 class TCPClient(QWidget):
     def __init__(self):
@@ -93,12 +125,11 @@ class TCPClient(QWidget):
         self.icon_label.setAlignment(Qt.AlignRight | Qt.AlignBottom)
 
         # 创建界面组件 -- 标题栏
-        self.header_label = QLabel('                                    ITF Dogrobber                           V2.1')
+        self.header_label = QLabel('                                    ITF Dogrobber                           V3.0')
         self.header_label.setFont(QFont('Microsoft YaHei', 15))
         self.header_label.setAlignment(Qt.AlignCenter)
         self.header_label.setStyleSheet("background-color: #32CD32; color: white;")
         self.header_label.setFixedHeight(50)  # 设置高度为40像素
-
 
 
         # 创建界面组件
@@ -129,9 +160,6 @@ class TCPClient(QWidget):
         self.send_button = QPushButton('send')
         self.send_button.setFont(QFont('Microsoft YaHei', 9))
 
-        # 创建按钮用于弹出照片查看窗口
-        self.show_photo_button = QPushButton('Show Photo')
-        self.show_photo_button.setFont(QFont('Microsoft YaHei', 9))
 
         # 添加清除按钮
         self.clear_data_button = QPushButton('Clear Data')
@@ -186,7 +214,6 @@ class TCPClient(QWidget):
         input_layout.addWidget(self.port_label)
         input_layout.addWidget(self.port_edit)
 
-
         main_layout.addLayout(header_layout)
 
         main_layout.addLayout(input_layout)
@@ -201,7 +228,6 @@ class TCPClient(QWidget):
         self.receive_area_label = QLabel('Data display area:')
         self.receive_area_label.setFont(QFont('Microsoft YaHei', 9))
 
-
         main_layout.addWidget(self.send_area_label)
         main_layout.addWidget(self.send_textedit)
         main_layout.addWidget(self.clear_data_button)
@@ -211,15 +237,11 @@ class TCPClient(QWidget):
 
         main_layout.addWidget(self.icon_label)
 
-
         button_layout.addWidget(self.connect_button)
         button_layout.addWidget(self.disconnect_button)
         button_layout.addWidget(self.send_button)
-        button_layout.addWidget(self.show_photo_button)  # 添加显示照片按钮
 
         #button_layout.addWidget(self.clear_data_button)
-
-
 
         self.setLayout(main_layout)
 
@@ -236,10 +258,6 @@ class TCPClient(QWidget):
         self.file_button.clicked.connect(self.select_file)
         self.start_button.clicked.connect(self.start)
 
-        # 连接按钮的点击事件
-        self.show_photo_button.clicked.connect(self.show_photo_viewer)
-
-
         # 创建TCP套接字
         self.tcp_socket = QTcpSocket(self)
 
@@ -249,9 +267,17 @@ class TCPClient(QWidget):
     def connect_to_server(self):
         ip = self.ip_edit.text()
         port = int(self.port_edit.text())
-        self.tcp_socket.connectToHost(ip, port)
-
-        self.tcp_socket.stateChanged.connect(self.handle_connection_status_change)
+        if self.tcp_socket.state() != QTcpSocket.ConnectedState:
+            self.tcp_socket.connectToHost(ip, port)
+            connected = self.tcp_socket.waitForConnected(1200)  # 设置超时为1.2秒
+            if connected:
+                self.connect_button.setEnabled(False)
+                self.tcp_socket.stateChanged.connect(self.handle_connection_status_change)
+            else:
+                QMessageBox.information(self, 'TCP', 'TCP connection failed')
+                self.connect_button.setEnabled(True)  # 在连接失败时恢复按钮状态
+        else:
+            QMessageBox.information(self, 'TCP', 'TCP connection already established')
 
         self.disconnect_flag = False  # 初始化标志值
 
@@ -260,7 +286,7 @@ class TCPClient(QWidget):
             self.connect_button.setEnabled(False)
         elif state == QTcpSocket.UnconnectedState:
             if not self.disconnect_flag:  # 如果尚未弹出过提示窗口
-                QMessageBox.information(self, 'TCP', 'TCP connection disconnected')
+                #QMessageBox.information(self, 'TCP', 'TCP connection disconnected')
                 self.connect_button.setEnabled(True)
                 self.disconnect_flag = True  # 设置标志为True，表示已经弹出过提示窗口
 
@@ -276,7 +302,6 @@ class TCPClient(QWidget):
 
         self.connect_button.setEnabled(True)
 
-
     def receive_data(self):
         if self.send_format_ascii:
             data = self.tcp_socket.readAll().data().decode()
@@ -285,6 +310,11 @@ class TCPClient(QWidget):
             receive_current_time = datetime.now().time().strftime("%H:%M:%S.%f")[:-3]  #获得当前时间
             data = ' '.join(hex_data[i:i + 2] for i in range(0, len(hex_data), 2))  # 把data数据以每两个字符空一格
             receive_message = f"[{receive_current_time}] Receive:{data}"
+
+            byte_data = bytes.fromhex(hex_data)   #把16进制字符串格式数据转换为字节数组
+            if byte_data == b'Forever':
+                self.show_photo_viewer()
+
 
         self.view_textedit.append(receive_message)
 
@@ -369,11 +399,41 @@ class TCPClient(QWidget):
                 self.progress_timer.stop()  # 停止计时器
                 self.progress_dialog.close()
 
+    def decrypt_image(self):
+        # 打开加密图片并读取数据
+        encrypted_path = 'ITF_Team_Photo_encrypted.jpg'
+        output_path = 'ITF_Team_Photo_decrypted.jpg'
+        with open(encrypted_path, 'rb') as encrypted_file:
+            encrypted_data = encrypted_file.read()
+
+        # 提取IV（初始化向量）和加密数据
+        iv = encrypted_data[:16]
+        encrypted_data = encrypted_data[16:]
+
+        key = b'this_is_a_key123'
+        # 创建AES对象并进行解密
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        raw_data = unpad(cipher.decrypt(encrypted_data), AES.block_size)
+
+        # 将解密后的数据写入输出文件
+        with open(output_path, 'wb') as output_file:
+            output_file.write(raw_data)
+
     def show_photo_viewer(self):
-        photo_path = 'ITF_Team_Photo.jpg'  # 照片文件路径
-        description_text = 'Samson:Patience is the key in life\nTom:Connecting people and world\nPhillip:Experience is the best teacher\n第四行文字。\n第五行文字。\n第六行文字。'  # 说明文字
+        self.decrypt_image()    #对'ITF_Team_Photo_encrypted.jpg'照片进行解密
+        photo_path = 'ITF_Team_Photo_decrypted.jpg'  # 照片文件路径
+        description_text = 'Samson : Patience is the key in life.\n' \
+                           'Tom : Connecting people and world.\n' \
+                           'Phillip : Experience is the best teacher.\n' \
+                           'Sarah : Peace life,Peace world.\n' \
+                           'Yuan : You are the best.\n' \
+                           'Julien : Leadership lights the way, communication binds us, and support propels everyone forward - together, they illuminate the journey of greatness.'  # 说明文字
         viewer_dialog = PhotoViewerDialog(photo_path, description_text, self)
         viewer_dialog.exec_()
+        try:
+            os.remove('ITF_Team_Photo_decrypted.jpg')  #删除解密后的照片
+        except FileNotFoundError:
+            pass  # 如果文件不存在，则忽略
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
