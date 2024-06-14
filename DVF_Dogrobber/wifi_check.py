@@ -7,6 +7,14 @@ workbook = load_workbook(filename='Lite DVF Configuration File_v0.2.xlsx')
 # 选择工作表
 wifi_check_sheet = workbook['Wi-Fi Check']
 
+def get_wifi_enable_test_suite():
+    wifi_test_suite_list = []  # 存储执行fast configure的test suite
+    cell_value = wifi_check_sheet.cell(row=4, column=3).value
+    if cell_value == 'Y':
+        test_suite_subCommand = wifi_check_sheet.cell(row=4, column=2).value
+        wifi_test_suite_list.append(test_suite_subCommand)
+    return wifi_test_suite_list
+
 sub_suite_fast = []  #存储执行fast configure的test suite
 # 初始化行号
 row_num = 4  # 从E4开始，行号为4
@@ -19,9 +27,9 @@ while True:
     elif cell_value == 'Y':
         test_suite = wifi_check_sheet.cell(row=row_num, column=1).value
         sub_suite_fast.append(test_suite)
-        print(sub_suite_fast[row_num - 4])
+        #print(sub_suite_fast[row_num - 4])
     else:
-        print(workbook.cell(row=row_num, column=4).value)
+        pass#print(workbook.cell(row=row_num, column=4).value)
     # 行号递增，移动到下一行
     row_num += 1
 
@@ -70,42 +78,24 @@ def set_bits_from_reversed_string(bit_positions_str):
 
     return hex_value_le
 
-def calculate_crc(str_list):
-    data_list = str_list.split(" ")
-    hex_data_list = [hex(int(x, 16)) for x in data_list]
-    # 将十六进制字符串转换为整数，并求和
-    sum_value = sum(int(x, 16) for x in hex_data_list)
-    # 按位取反操作
-    crc_result_0 = sum_value ^ 0xFF
-    # 取后8位
-    crc_result = crc_result_0 & 0xFF
-    hex_data_list.append(hex(crc_result))
-    formatted_hex_list = ['{:02X}'.format(int(x, 16)) for x in hex_data_list]
-    formatted_str = ' '.join(formatted_hex_list)
-    return formatted_str
+def wifi_scan_request_command():
+    Wifi_scan_subcommand = wifi_check_sheet.cell(row=4, column=2).value
+    Timeout = wifi_check_sheet.cell(row=4, column=7).value
+    Element_number = wifi_check_sheet.cell(row=5, column=7).value
+    SSID_length = len(wifi_check_sheet.cell(row=7, column=7).value)
+    SSID_string = wifi_check_sheet.cell(row=7, column=7).value
+    Channel_list = wifi_check_sheet.cell(row=8, column=7).value
 
-Wifi_scan_subcommand = wifi_check_sheet.cell(row=4, column=2).value
-Timeout = wifi_check_sheet.cell(row=4, column=7).value
-Element_number = wifi_check_sheet.cell(row=5, column=7).value
-SSID_length = len(wifi_check_sheet.cell(row=7, column=7).value)
-SSID_string = wifi_check_sheet.cell(row=7, column=7).value
-Channel_list = wifi_check_sheet.cell(row=8, column=7).value
+    wifi_scan_payload = Wifi_scan_subcommand + " " + int_to_hex_le(Timeout, 2) + " " + int_to_hex_le(Element_number, 1) + " " \
+                        + int_to_hex_le(SSID_length, 1) + " " + string_to_hex_spaced(SSID_string) + " " + set_bits_from_reversed_string(Channel_list)
 
-wifi_scan_payload = Wifi_scan_subcommand + " " + int_to_hex_le(Timeout, 2) + " " + int_to_hex_le(Element_number, 1) + " " \
-                    + int_to_hex_le(SSID_length, 1) + " " + string_to_hex_spaced(SSID_string) + " " + set_bits_from_reversed_string(Channel_list)
+    payload_length = int(len(wifi_scan_payload.replace(' ', ''))/2)
+    payload_length_hex = ' '.join(f'{b:02x}' for b in payload_length.to_bytes(2, byteorder='little'))
+    wifi_scan_request_command = payload_length_hex + " " + wifi_scan_payload   #payload length + payload
 
-
-payload_length = int(len(wifi_scan_payload.replace(' ', ''))/2)
-payload_length_hex = ' '.join(f'{b:02x}' for b in payload_length.to_bytes(2, byteorder='little'))
-wifi_scan_request_nonCrc = "03" + " " + payload_length_hex + " " + wifi_scan_payload
-
-calculate_crc(wifi_scan_request_nonCrc)
-
-wifi_scan_request_entire = "5A" + " " + calculate_crc(wifi_scan_request_nonCrc)
-
-hex_command = bytes.fromhex(wifi_scan_request_entire)
-
-print(hex_command)
-
+    #wifi_scan_request_command_list = [int(s, 16) for s in wifi_scan_request_command.split()]
+    wifi_scan_request_command_list = wifi_scan_request_command.split()  #16进制数列表（字符串形式）
+    wifi_scan_request_command_list = [int(x, 16) for x in wifi_scan_request_command_list]   #字符串形式转换为整数列表
+    return wifi_scan_request_command_list
 
 
