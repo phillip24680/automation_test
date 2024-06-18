@@ -11,7 +11,7 @@ def verify_response(response_str_list):
         response_str_list[5] == "01"
     )
 
-def send_data_to_server():
+def send_data_to_server(excel_file):
     # 服务器地址和端口
     SERVER_ADDRESS = '192.168.3.11'
     SERVER_PORT = 6666
@@ -21,27 +21,34 @@ def send_data_to_server():
         s.connect((SERVER_ADDRESS, SERVER_PORT))
 
         # 要发送的数据列表
-        commands_to_be_sent_dict = generate_commands_to_be_sent()  # 假设的数据
+        commands_to_be_sent_dict = generate_commands_to_be_sent(excel_file)  # 假设的数据
+
+        config_mode = "Fast"  # 默认值
+        if "test scope" in commands_to_be_sent_dict:
+            config_mode = "Normal"
 
         # 发送数据并验证响应
         for value in commands_to_be_sent_dict.values():
             # 发送数据
-            #print(value)
+            print("send data:")
+            print([format(num, '02X') for num in value])
             s.sendall(bytes(value))
 
-            #time.sleep(0.2)
+            #time.sleep(3)
             # 接收响应，这里假设服务器会立即回复，并且回复数据不大
             s.settimeout(1)  # 设置第一个回复的超时时间为1秒
 
             try:
                 ack_response = s.recv(8)  # 尝试在1秒内读取最多8字节的数据
+                print(ack_response)
                 if ack_response:
                     ack_response_str_list = [hex(byte)[2:].upper().zfill(2) for byte in ack_response]
                     if verify_response(ack_response_str_list):
+                        print("receive data:")
                         print(ack_response_str_list)
                     else:
                         s.close()
-                        return False
+                        return config_mode + " configuration failed"
 
                 else:
                     print("ack_response回复为空")
@@ -61,13 +68,13 @@ def send_data_to_server():
                         print(notify_response_str_list)
                     else:
                         s.close()
-                        return False
+                        return config_mode + " configuration failed"
                 else:
                     print("notify_response回复为空")
             except socket.timeout:
                 print("notify_response回复超时")
                 s.close()
-                return False
+                return config_mode + " configuration failed"
 
                 # 如果你不再需要超时，可以将它设置为None
             s.settimeout(None)
@@ -75,6 +82,6 @@ def send_data_to_server():
         # 关闭连接
         s.close()
         # 正常流程结束，with语句会自动关闭s
-        return True
+        return config_mode + " configuration compeleted"
 
-#print(send_data_to_server())
+#print(send_data_to_server('D:/code_project/Python_Project/DVF_Dogrobber/Lite DVF Configuration File_v0.2.xlsx'))

@@ -32,8 +32,6 @@ class TCPClient(QWidget):
         self.setWindowTitle('DVF Dogrobber V1.0')
         self.resize(800, 400)
 
-        # ...初始化代码...
-        self.configuration_count = 1  # 新增变量，记录点击次数
 
         # 添加图标
         self.icon_label = QLabel()
@@ -148,16 +146,10 @@ class TCPClient(QWidget):
         # 弹窗显示配置信息
         message_box = QMessageBox(self)
         message_box.setWindowTitle("Configuration Status")
-        if self.configuration_count % 2 == 0:
-            # 第一次点击
-            message_box.setText("Configuring...")
-            self.timer = QTimer.singleShot(3000, lambda: self.update_message_box(message_box,
-                                                                                 "Normal configuration completed."))
-        else:
-            # 第二次点击
-            message_box.setText("Configuring...")
-            self.timer = QTimer.singleShot(3000, lambda: self.update_message_box(message_box,
-                                                                                 "Fast configuration completed."))
+
+        message_box.setText("Configuring...")
+        self.timer = QTimer.singleShot(1000, lambda: self.update_message_box(message_box, self.response_verify))
+
         message_box.exec_()
 
     def update_message_box(self, message_box, new_text):
@@ -166,8 +158,7 @@ class TCPClient(QWidget):
         #message_box.button(QMessageBox.Ok).click()
 
     def config_button_clicked(self):
-        send_data_to_server()
-        self.configuration_count += 1
+        self.response_verify = send_data_to_server(self.configuration_file_edit.text())
         self.show_configuration_message()
 
     def select_firmware_file(self):

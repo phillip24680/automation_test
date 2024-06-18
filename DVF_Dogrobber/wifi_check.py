@@ -1,13 +1,11 @@
 from openpyxl import load_workbook
 import struct
 
-# 加载Excel文件
-workbook = load_workbook(filename='Lite DVF Configuration File_v0.2.xlsx')
-
-# 选择工作表
-wifi_check_sheet = workbook['Wi-Fi Check']
-
-def get_wifi_enable_test_suite():
+def get_wifi_enable_test_suite(excel_file):
+    # 加载Excel文件
+    workbook = load_workbook(filename=excel_file)
+    # 选择工作表
+    wifi_check_sheet = workbook['Wi-Fi Check']
     wifi_test_suite_list = []  # 存储执行fast configure的test suite
     cell_value = wifi_check_sheet.cell(row=4, column=3).value
     if cell_value == 'Y':
@@ -15,23 +13,23 @@ def get_wifi_enable_test_suite():
         wifi_test_suite_list.append(test_suite_subCommand)
     return wifi_test_suite_list
 
-sub_suite_fast = []  #存储执行fast configure的test suite
-# 初始化行号
-row_num = 4  # 从E4开始，行号为4
-# 循环读取，直到遇到空值
-while True:
-    # 获取单元格值
-    cell_value = wifi_check_sheet.cell(row=row_num, column=4).value  # 列号5对应E列
-    if cell_value is None:  # 如果单元格为空，则停止循环
-        break
-    elif cell_value == 'Y':
-        test_suite = wifi_check_sheet.cell(row=row_num, column=1).value
-        sub_suite_fast.append(test_suite)
-        #print(sub_suite_fast[row_num - 4])
-    else:
-        pass#print(workbook.cell(row=row_num, column=4).value)
-    # 行号递增，移动到下一行
-    row_num += 1
+# sub_suite_fast = []  #存储执行fast configure的test suite
+# # 初始化行号
+# row_num = 4  # 从E4开始，行号为4
+# # 循环读取，直到遇到空值
+# while True:
+#     # 获取单元格值
+#     cell_value = wifi_check_sheet.cell(row=row_num, column=4).value  # 列号5对应E列
+#     if cell_value is None:  # 如果单元格为空，则停止循环
+#         break
+#     elif cell_value == 'Y':
+#         test_suite = wifi_check_sheet.cell(row=row_num, column=1).value
+#         sub_suite_fast.append(test_suite)
+#         #print(sub_suite_fast[row_num - 4])
+#     else:
+#         pass#print(workbook.cell(row=row_num, column=4).value)
+#     # 行号递增，移动到下一行
+#     row_num += 1
 
 #把字符串转换为16进制格式输出，且每个字节间空一格
 def string_to_hex_spaced(s):
@@ -78,7 +76,11 @@ def set_bits_from_reversed_string(bit_positions_str):
 
     return hex_value_le
 
-def wifi_scan_request_command():
+def wifi_scan_request_command(excel_file):
+    # 加载Excel文件
+    workbook = load_workbook(filename=excel_file)
+    # 选择工作表
+    wifi_check_sheet = workbook['Wi-Fi Check']
     Wifi_scan_subcommand = wifi_check_sheet.cell(row=4, column=2).value
     Timeout = wifi_check_sheet.cell(row=4, column=7).value
     Element_number = wifi_check_sheet.cell(row=5, column=7).value
@@ -89,12 +91,14 @@ def wifi_scan_request_command():
     wifi_scan_payload = Wifi_scan_subcommand + " " + int_to_hex_le(Timeout, 2) + " " + int_to_hex_le(Element_number, 1) + " " \
                         + int_to_hex_le(SSID_length, 1) + " " + string_to_hex_spaced(SSID_string) + " " + set_bits_from_reversed_string(Channel_list)
 
+    print(set_bits_from_reversed_string(Channel_list))
+
     payload_length = int(len(wifi_scan_payload.replace(' ', ''))/2)
     payload_length_hex = ' '.join(f'{b:02x}' for b in payload_length.to_bytes(2, byteorder='little'))
-    wifi_scan_request_command = payload_length_hex + " " + wifi_scan_payload   #payload length + payload
+    wifi_scan_request_command_str = payload_length_hex + " " + wifi_scan_payload   #payload length + payload
 
-    #wifi_scan_request_command_list = [int(s, 16) for s in wifi_scan_request_command.split()]
-    wifi_scan_request_command_list = wifi_scan_request_command.split()  #16进制数列表（字符串形式）
+    #wifi_scan_request_command_list = [int(s, 16) for s in wifi_scan_request_command_str.split()]
+    wifi_scan_request_command_list = wifi_scan_request_command_str.split()  #16进制数列表（字符串形式）
 
     wifi_scan_request_command_list = [int(x, 16) for x in wifi_scan_request_command_list]   #字符串形式转换为整数列表
     return wifi_scan_request_command_list

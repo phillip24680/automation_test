@@ -2,13 +2,13 @@ from openpyxl import load_workbook
 from wifi_check import get_wifi_enable_test_suite,wifi_scan_request_command
 #V1.0
 
-# 加载Excel文件
-workbook = load_workbook(filename='Lite DVF Configuration File_v0.2.xlsx')
 
-# 选择工作表
-global_sheet = workbook['Global Configuration']
+def get_enable_test_suite(column_num, excel_file):
+    # 加载Excel文件
+    workbook = load_workbook(filename=excel_file)
 
-def get_enable_test_suite(column_num):
+    # 选择工作表
+    global_sheet = workbook['Global Configuration']
     test_suite_dict = {}  # 存储执行fast configure的test suite
     # 初始化行号
     row_num = 4  # 从E4开始，行号为4
@@ -39,22 +39,22 @@ def calculate_crc_add_magicNumber(hex_data_list):
 
     return hex_data_list
 
-def generate_commands_to_be_sent():
+def generate_commands_to_be_sent(excel_file):
     # 定义发送命令的字典
     command_dict = {}
-    fast_config_scope = get_enable_test_suite(5)   #获取fast config的范围
+    fast_config_scope = get_enable_test_suite(5, excel_file)   #获取fast config的范围
     if "Wi-Fi Check" in fast_config_scope:
         wifi_check_command = fast_config_scope["Wi-Fi Check"]
-        wifi_scan_request_command_list = wifi_scan_request_command()
+        wifi_scan_request_command_list = wifi_scan_request_command(excel_file)
         wifi_scan_request_command_list.insert(0, int(wifi_check_command))
-        wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command()
+        wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command(excel_file)
         calculate_crc_add_magicNumber(wifi_scan_request_command_list)
         command_dict["Wi-Fi Check"] = wifi_scan_request_command_list
 
         #print(' '.join([hex(num)[2:].zfill(2).upper() for num in wifi_scan_request_command_list]))  # 打印字符串格式指令
         return command_dict
     else:
-        test_scope = get_enable_test_suite(4)  #获取Global Execution Option列的值
+        test_scope = get_enable_test_suite(4, excel_file)  #获取Global Execution Option列的值
         # 生成测试范围与配置指令
         if len(test_scope) == 0:
             scope_command_list = ['06', '01', '00', '01']
@@ -71,9 +71,9 @@ def generate_commands_to_be_sent():
             command_dict["test scope"] = scope_command_list
 
             wifi_check_command = test_scope["Wi-Fi Check"]
-            wifi_scan_request_command_list = wifi_scan_request_command()
+            wifi_scan_request_command_list = wifi_scan_request_command(excel_file)
             wifi_scan_request_command_list.insert(0, int(wifi_check_command))
-            wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command()
+            wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command(excel_file)
             calculate_crc_add_magicNumber(wifi_scan_request_command_list)
             #print(' '.join([hex(num)[2:].zfill(2).upper() for num in wifi_scan_request_command_list]))
             command_dict["Wi-Fi Check"] = wifi_scan_request_command_list
