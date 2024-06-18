@@ -9,7 +9,7 @@ workbook = load_workbook(filename='Lite DVF Configuration File_v0.2.xlsx')
 global_sheet = workbook['Global Configuration']
 
 def get_enable_test_suite(column_num):
-    test_suite_list = []  # 存储执行fast configure的test suite
+    test_suite_dict = {}  # 存储执行fast configure的test suite
     # 初始化行号
     row_num = 4  # 从E4开始，行号为4
     # 循环读取，直到遇到空值
@@ -20,15 +20,14 @@ def get_enable_test_suite(column_num):
             break
         elif cell_value == 'Y':
             test_suite_name = global_sheet.cell(row=row_num, column=1).value
-            test_suite_list.append(test_suite_name)
             test_suite_command = global_sheet.cell(row=row_num, column=2).value
-            test_suite_list.append(test_suite_command)
+            test_suite_dict[test_suite_name] = test_suite_command
         # 行号递增，移动到下一行
         row_num += 1
-    return test_suite_list
+    return test_suite_dict
 
 def calculate_crc_add_magicNumber(hex_data_list):
-    # 将十六进制字符串转换为整数，并求和
+    # 将十六进制数求和
     sum_value = sum(hex_data_list)
     #sum_value = hex(sum_value)
     # 按位取反操作
@@ -40,37 +39,49 @@ def calculate_crc_add_magicNumber(hex_data_list):
 
     return hex_data_list
 
-fast_config_scope = get_enable_test_suite(5)
-if fast_config_scope and any("Wi-Fi Check" in item for item in fast_config_scope):
-    wifi_check_command = fast_config_scope[fast_config_scope.index("Wi-Fi Check") + 1]
-    wifi_scan_request_command_list = wifi_scan_request_command()
-    wifi_scan_request_command_list.insert(0, int(wifi_check_command))
-    calculate_crc_add_magicNumber(wifi_scan_request_command_list)
-    print(wifi_scan_request_command_list)
-    #print(bytes(wifi_scan_request_command_list))  # 要发送配置wifi scan的指令
-
-else:
-    test_scope = get_enable_test_suite(4)
-    #发送测试范围指令
-    if len(test_scope) == 0:
-        scope_command_list = ['06', '01', '00', '01']
-        scope_command_list = [int(x, 16) for x in scope_command_list]
-        calculate_crc_add_magicNumber(scope_command_list)
-        print(scope_command_list)
-    else:
-        scope_command_list = ['06', '03', '00', '01', '03', '00']
-        scope_command_list = [int(x, 16) for x in scope_command_list]
-        calculate_crc_add_magicNumber(scope_command_list)
-        print(scope_command_list)
-
-    #发送配置指令
-    if test_scope and any("Wi-Fi Check" in item for item in test_scope):
-        wifi_check_command = test_scope[test_scope.index("Wi-Fi Check") + 1]
+def generate_commands_to_be_sent():
+    # 定义发送命令的字典
+    command_dict = {}
+    fast_config_scope = get_enable_test_suite(5)   #获取fast config的范围
+    if "Wi-Fi Check" in fast_config_scope:
+        wifi_check_command = fast_config_scope["Wi-Fi Check"]
         wifi_scan_request_command_list = wifi_scan_request_command()
         wifi_scan_request_command_list.insert(0, int(wifi_check_command))
+        wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command()
         calculate_crc_add_magicNumber(wifi_scan_request_command_list)
-        print(wifi_scan_request_command_list)
-        #print(bytes(wifi_scan_request_command_list))   #要发送配置wifi scan的指令
+        command_dict["Wi-Fi Check"] = wifi_scan_request_command_list
+
+        #print(' '.join([hex(num)[2:].zfill(2).upper() for num in wifi_scan_request_command_list]))  # 打印字符串格式指令
+        return command_dict
+    else:
+        test_scope = get_enable_test_suite(4)  #获取Global Execution Option列的值
+        # 生成测试范围与配置指令
+        if len(test_scope) == 0:
+            scope_command_list = ['06', '01', '00', '01']
+            scope_command_list = [int(x, 16) for x in scope_command_list]
+            calculate_crc_add_magicNumber(scope_command_list)
+            #print(' '.join([hex(num)[2:].zfill(2).upper() for num in scope_command_list]))
+            command_dict["test scope"] = scope_command_list
+            return command_dict
+        else:
+            scope_command_list = ['06', '03', '00', '01', '03', '00']
+            scope_command_list = [int(x, 16) for x in scope_command_list]
+            calculate_crc_add_magicNumber(scope_command_list)
+            #print(' '.join([hex(num)[2:].zfill(2).upper() for num in scope_command_list]))
+            command_dict["test scope"] = scope_command_list
+
+            wifi_check_command = test_scope["Wi-Fi Check"]
+            wifi_scan_request_command_list = wifi_scan_request_command()
+            wifi_scan_request_command_list.insert(0, int(wifi_check_command))
+            wifi_scan_request_command_list = [int(wifi_check_command)] + wifi_scan_request_command()
+            calculate_crc_add_magicNumber(wifi_scan_request_command_list)
+            #print(' '.join([hex(num)[2:].zfill(2).upper() for num in wifi_scan_request_command_list]))
+            command_dict["Wi-Fi Check"] = wifi_scan_request_command_list
+
+            return command_dict
+
+#print(generate_commands_to_be_sent())
+
 
 
 

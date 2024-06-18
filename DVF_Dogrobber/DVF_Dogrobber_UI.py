@@ -11,6 +11,8 @@ import subprocess
 import time
 from PyQt5.QtCore import QTimer
 
+from tcp_client import send_data_to_server
+
 class ExecuteProcessThread(QThread):
     progress_updated = pyqtSignal(int)
     process_finished = pyqtSignal(bool)
@@ -31,7 +33,7 @@ class TCPClient(QWidget):
         self.resize(800, 400)
 
         # ...初始化代码...
-        self.configuration_count = 1  # 新增变量，记录start_button2点击次数
+        self.configuration_count = 1  # 新增变量，记录点击次数
 
         # 添加图标
         self.icon_label = QLabel()
@@ -64,41 +66,42 @@ class TCPClient(QWidget):
         firmware_group = QGroupBox("Firmware Download")
         firmware_layout = QVBoxLayout()
 
-        self.file_label = QLabel('Select Test Firmware:')
-        self.file_label.setFont(QFont('Microsoft YaHei', 10))
-        self.file_edit = QLineEdit()
-        self.file_edit.setReadOnly(True)
-        self.file_button = QPushButton('Select File')
-        self.file_button.setFont(QFont('Microsoft YaHei', 10))
-        self.start_button = QPushButton('Download Program')
-        self.start_button.setFont(QFont('Microsoft YaHei', 10))
+        self.firmware_file_label = QLabel('Select Test Firmware:')
+        self.firmware_file_label.setFont(QFont('Microsoft YaHei', 10))
+        self.firmware_file_edit = QLineEdit()
+        self.firmware_file_edit.setReadOnly(True)
+        self.firmware_file_button = QPushButton('Select File')
+        self.firmware_file_button.setFont(QFont('Microsoft YaHei', 10))
+        self.download_button = QPushButton('Download Program')
+        self.download_button.setFont(QFont('Microsoft YaHei', 10))
+
         # 创建文件选择相关的水平布局
         firmware_file_layout = QHBoxLayout()
-        firmware_file_layout.addWidget(self.file_label)
-        firmware_file_layout.addWidget(self.file_edit)
-        firmware_file_layout.addWidget(self.file_button)
+        firmware_file_layout.addWidget(self.firmware_file_label)
+        firmware_file_layout.addWidget(self.firmware_file_edit)
+        firmware_file_layout.addWidget(self.firmware_file_button)
         firmware_layout.addLayout(firmware_file_layout)  # 添加水平布局到垂直布局中
-        firmware_layout.addWidget(self.start_button)  # 下载按钮保持原位置
+        firmware_layout.addWidget(self.download_button)  # 下载按钮保持原位置
         firmware_group.setLayout(firmware_layout)
 
         # 分组：Configuration
         config_group = QGroupBox("Configuration")
         config_layout = QVBoxLayout()
-        self.file_label2 = QLabel('Select Configure File:')
-        self.file_label2.setFont(QFont('Microsoft YaHei', 10))
-        self.file_edit2 = QLineEdit()
-        self.file_edit2.setReadOnly(True)
-        self.file_button2 = QPushButton('Select File')
-        self.file_button2.setFont(QFont('Microsoft YaHei', 10))
-        self.start_button2 = QPushButton('Start Configuration')
-        self.start_button2.setFont(QFont('Microsoft YaHei', 10))
+        self.configuration_file_label = QLabel('Select Configure File:')
+        self.configuration_file_label.setFont(QFont('Microsoft YaHei', 10))
+        self.configuration_file_edit = QLineEdit()
+        self.configuration_file_edit.setReadOnly(True)
+        self.configuration_file_button = QPushButton('Select File')
+        self.configuration_file_button.setFont(QFont('Microsoft YaHei', 10))
+        self.config_button = QPushButton('Start Configuration')
+        self.config_button.setFont(QFont('Microsoft YaHei', 10))
         # 创建文件选择相关的水平布局
         config_file_layout = QHBoxLayout()
-        config_file_layout.addWidget(self.file_label2)
-        config_file_layout.addWidget(self.file_edit2)
-        config_file_layout.addWidget(self.file_button2)
+        config_file_layout.addWidget(self.configuration_file_label)
+        config_file_layout.addWidget(self.configuration_file_edit)
+        config_file_layout.addWidget(self.configuration_file_button)
         config_layout.addLayout(config_file_layout)  # 添加水平布局到垂直布局中
-        config_layout.addWidget(self.start_button2)  # 配置开始按钮保持原位置
+        config_layout.addWidget(self.config_button)  # 配置开始按钮保持原位置
         config_group.setLayout(config_layout)
 
         # 主布局
@@ -124,25 +127,22 @@ class TCPClient(QWidget):
         self.setLayout(main_layout)
 
         # 连接信号槽
-        self.file_button.clicked.connect(self.select_file)
-        self.start_button.clicked.connect(self.start)
-        self.file_button2.clicked.connect(self.select_file2)
-        self.start_button2.clicked.connect(self.start_button2_clicked)  # 更改为新的槽函数
+        self.firmware_file_button.clicked.connect(self.select_firmware_file)
+        self.download_button.clicked.connect(self.download_button_clicked)
+        self.configuration_file_button.clicked.connect(self.select_configuration_file)
+        self.config_button.clicked.connect(self.config_button_clicked)  # 更改为新的槽函数
 
         self.tcp_socket = QTcpSocket(self)
 
-    def select_file(self):
+    def select_firmware_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, 'Select Firmware')
         if file_path:
-            self.file_edit.setText(file_path)
+            self.firmware_file_edit.setText(file_path)
 
-    def select_file2(self):
+    def select_configuration_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, 'Select Configuration File')
         if file_path:
-            self.file_edit2.setText(file_path)
-
-    def start(self):
-        print("Starting the process...")
+            self.configuration_file_edit.setText(file_path)
 
     def show_configuration_message(self):
         # 弹窗显示配置信息
@@ -165,11 +165,65 @@ class TCPClient(QWidget):
         message_box.setText(new_text)
         #message_box.button(QMessageBox.Ok).click()
 
-    def start_button2_clicked(self):
+    def config_button_clicked(self):
+        send_data_to_server()
         self.configuration_count += 1
         self.show_configuration_message()
 
-    # 其他原有方法保持不变...
+    def select_firmware_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, 'select file')
+        if file_path:
+            self.firmware_file_edit.setText(file_path)
+
+    def download_button_clicked(self):
+        file_path = self.firmware_file_edit.text()
+        exe_name = "uuu.exe"
+        args = ["-b", "emmc_burn_indus_fw_ddr.lst", "flash.bin", file_path]
+
+        if file_path:
+            # 在开始新任务之前停止并重新启动定时器
+            if hasattr(self, 'progress_timer') and self.progress_timer.isActive():
+                self.progress_timer.stop()
+            # 创建并启动线程
+            self.execute_thread = ExecuteProcessThread(exe_name, args)
+            #self.execute_thread.process_finished.connect(self.complete_progress)
+            self.execute_thread.start()
+
+            # 显示进度条弹窗
+            self.show_progress_dialog()
+        else:
+            print('Please select a file first')
+
+    def show_progress_dialog(self):
+        # 创建进度条弹窗
+        self.progress_dialog = QProgressDialog(self)
+        self.progress_dialog.setModal(False)  # 设置为非模态对话框，不会阻塞代码执行
+        self.progress_dialog.setWindowTitle('Progress')
+        self.progress_dialog.setLabelText('Loading...')
+        self.progress_dialog.setRange(0, 100)
+        self.progress_dialog.setValue(0)  # 设置初始值为0
+
+        self.progress_dialog.show()
+
+        # 设置进度条弹窗的大小
+        self.progress_dialog.setFixedSize(280, 100)
+
+        # 设置计时器，每0.5秒增加25%进度
+        self.progress_timer = QTimer(self)
+        self.progress_timer.start(1350)
+        self.progress_timer.timeout.connect(self.increase_progress)
+
+    def increase_progress(self):
+        if self.progress_dialog and self.progress_dialog.isVisible():
+            current_value = self.progress_dialog.value()
+            max_value = self.progress_dialog.maximum()
+            if current_value < 100:
+                value = current_value + 10
+                self.progress_dialog.setValue(value)
+            else:
+                # 进度条达到最大值，关闭进度条弹窗
+                self.progress_timer.stop()  # 停止计时器
+                self.progress_dialog.close()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

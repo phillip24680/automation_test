@@ -95,6 +95,7 @@ def wifi_scan_request_command():
 
     #wifi_scan_request_command_list = [int(s, 16) for s in wifi_scan_request_command.split()]
     wifi_scan_request_command_list = wifi_scan_request_command.split()  #16进制数列表（字符串形式）
+
     wifi_scan_request_command_list = [int(x, 16) for x in wifi_scan_request_command_list]   #字符串形式转换为整数列表
     return wifi_scan_request_command_list
 
