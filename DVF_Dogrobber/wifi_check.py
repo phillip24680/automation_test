@@ -1,51 +1,15 @@
 from openpyxl import load_workbook
 import struct
 
-def get_wifi_enable_test_suite(excel_file):
-    # 加载Excel文件
-    workbook = load_workbook(filename=excel_file)
-    # 选择工作表
-    wifi_check_sheet = workbook['Wi-Fi Check']
-    wifi_test_suite_list = []  # 存储执行fast configure的test suite
-    cell_value = wifi_check_sheet.cell(row=4, column=3).value
-    if cell_value == 'Y':
-        test_suite_subCommand = wifi_check_sheet.cell(row=4, column=2).value
-        wifi_test_suite_list.append(test_suite_subCommand)
-    return wifi_test_suite_list
+def string_to_int_list(string):
+    return [ord(char) for char in string]
 
-# sub_suite_fast = []  #存储执行fast configure的test suite
-# # 初始化行号
-# row_num = 4  # 从E4开始，行号为4
-# # 循环读取，直到遇到空值
-# while True:
-#     # 获取单元格值
-#     cell_value = wifi_check_sheet.cell(row=row_num, column=4).value  # 列号5对应E列
-#     if cell_value is None:  # 如果单元格为空，则停止循环
-#         break
-#     elif cell_value == 'Y':
-#         test_suite = wifi_check_sheet.cell(row=row_num, column=1).value
-#         sub_suite_fast.append(test_suite)
-#         #print(sub_suite_fast[row_num - 4])
-#     else:
-#         pass#print(workbook.cell(row=row_num, column=4).value)
-#     # 行号递增，移动到下一行
-#     row_num += 1
-
-#把字符串转换为16进制格式输出，且每个字节间空一格
-def string_to_hex_spaced(s):
-    return ' '.join(['{:02x}'.format(ord(c)) for c in s])
-
-def int_to_hex_le(value, byte_length):
+def int_number_to_int_list(string_number, byte_length):
     """
     Convert an integer to a hexadecimal string in little-endian format with specified byte length.
     """
-    # Pack the integer into bytes using little-endian format
-    packed_value = struct.pack(f'<{byte_length}s', struct.pack('<i', value)[:byte_length])
-
-    # Convert to hex and format: remove '0x' prefix and add space between each byte
-    hex_str = ' '.join(f'{b:02x}' for b in packed_value)
-
-    return hex_str
+    packed_bytes = struct.pack(f'<{byte_length}s', struct.pack('<i', string_number)[:byte_length])
+    return [byte for byte in packed_bytes]
 
 def set_bits_from_reversed_string(bit_positions_str):
     # 将逗号分隔的字符串转换为整数列表，并确保在有效范围内
@@ -57,30 +21,31 @@ def set_bits_from_reversed_string(bit_positions_str):
     # 初始化一个16位全为0的二进制数
     bit_string = '0' * 16
 
-    # 遍历有效值（现在是从高位到低位，但因为我们逆序处理了values，实际上设置的是低位到高位）
+    # 遍历有效值（逆序处理values，设置的是低位到高位）
     for value in values:
         bit_string = bit_string[:value] + '1' + bit_string[value + 1:]
 
-    # 转换为整数
-    hex_value_int = int(bit_string, 2)
+    # 分割二进制字符串，前8位为高位B，后8位为低位A
+    high_8_bits = bit_string[:8]
+    low_8_bits = bit_string[8:]
 
-    # 确保转换结果适应2字节（16位），对于小于16位的情况，在前面补充0
-    hex_value_padded = f"{hex_value_int:04x}"  # 确保至少两位，最多四位（两位对于一个字节，这里是两个字节）
+    return [int(low_8_bits, 2), int(high_8_bits, 2)]
 
-    # 转换为小端模式的16进制字符串，每个字节间加空格
-    try:
-        hex_value_le = ' '.join(f'{b:02x}' for b in bytes.fromhex(hex_value_padded)[::-1])
-    except ValueError as e:
-        print(f"Error converting to hex: {e}")
-        hex_value_le = "Error"
+def calculate_crc_add_magicNumber(int_data_list):
+    # 将十六进制数求和
+    sum_value = sum(int_data_list)
+    #sum_value = hex(sum_value)
+    # 按位取反操作
+    crc_result_0 = sum_value ^ 0xFF
+    # 取后8位
+    crc_result = crc_result_0 & 0xFF
+    int_data_list.append(crc_result)
+    int_data_list.insert(0, 90)
 
-    return hex_value_le
+    return int_data_list
 
-def wifi_scan_request_command(excel_file):
-    # 加载Excel文件
-    workbook = load_workbook(filename=excel_file)
-    # 选择工作表
-    wifi_check_sheet = workbook['Wi-Fi Check']
+def generate_wifi_scan_request_command(wifi_check_sheet, moudle_id):
+
     Wifi_scan_subcommand = wifi_check_sheet.cell(row=4, column=2).value
     Timeout = wifi_check_sheet.cell(row=4, column=7).value
     Element_number = wifi_check_sheet.cell(row=5, column=7).value
@@ -88,19 +53,47 @@ def wifi_scan_request_command(excel_file):
     SSID_string = wifi_check_sheet.cell(row=7, column=7).value
     Channel_list = wifi_check_sheet.cell(row=8, column=7).value
 
-    wifi_scan_payload = Wifi_scan_subcommand + " " + int_to_hex_le(Timeout, 2) + " " + int_to_hex_le(Element_number, 1) + " " \
-                        + int_to_hex_le(SSID_length, 1) + " " + string_to_hex_spaced(SSID_string) + " " + set_bits_from_reversed_string(Channel_list)
+    #print(Channel_list)
 
-    print(set_bits_from_reversed_string(Channel_list))
+    payload_list = [int(Wifi_scan_subcommand)]+int_number_to_int_list(Timeout, 2)+int_number_to_int_list(Element_number,1)+int_number_to_int_list(SSID_length,1)+string_to_int_list(SSID_string)+set_bits_from_reversed_string(Channel_list)
 
-    payload_length = int(len(wifi_scan_payload.replace(' ', ''))/2)
-    payload_length_hex = ' '.join(f'{b:02x}' for b in payload_length.to_bytes(2, byteorder='little'))
-    wifi_scan_request_command_str = payload_length_hex + " " + wifi_scan_payload   #payload length + payload
+    wifi_scan_request_command_list = int_number_to_int_list(len(payload_list),2) + payload_list
 
-    #wifi_scan_request_command_list = [int(s, 16) for s in wifi_scan_request_command_str.split()]
-    wifi_scan_request_command_list = wifi_scan_request_command_str.split()  #16进制数列表（字符串形式）
+    wifi_scan_request_command_list.insert(0,int(moudle_id))
 
-    wifi_scan_request_command_list = [int(x, 16) for x in wifi_scan_request_command_list]   #字符串形式转换为整数列表
+    calculate_crc_add_magicNumber(wifi_scan_request_command_list)
+
+    #print(wifi_scan_request_command_list)
+
+    #print([format(num, '02X') for num in wifi_scan_request_command_list])
+
     return wifi_scan_request_command_list
 
 
+def generate_wifi_check_request_command(excel_file, moudle_id):
+    wifi_check_command_dict = {}
+    # 加载Excel文件
+    workbook = load_workbook(filename=excel_file, data_only=True)
+    # 选择工作表
+    wifi_check_sheet = workbook['Wi-Fi Check']
+
+    global_fast_configuration = wifi_check_sheet.cell(row=2, column=7).value
+    #global_execution_option = wifi_check_sheet.cell(row=2, column=6).value
+    #print(global_fast_configuration)
+    if global_fast_configuration == "Y":
+        wifi_scan_fast_config = wifi_check_sheet.cell(row=4, column=4).value
+        #以下为遍历所有子测试项的快速配置
+        if wifi_scan_fast_config == "Y":
+            wifi_check_command_dict["Wi-Fi Scanning"] = generate_wifi_scan_request_command(wifi_check_sheet, moudle_id)
+
+    if global_fast_configuration == "N":
+        #wifi_check_command_dict["test scope"] = []
+        wifi_scan_execution_option = wifi_check_sheet.cell(row=4, column=3).value
+        if wifi_scan_execution_option == "Y":
+            wifi_check_command_dict["test scope"] = [int(moudle_id), int(wifi_check_sheet.cell(row=4, column=2).value)]
+            wifi_check_command_dict["Wi-Fi Scanning"] = generate_wifi_scan_request_command(wifi_check_sheet, moudle_id)
+
+    workbook.close()
+    return wifi_check_command_dict
+
+#print(generate_wifi_check_request_command("Lite DVF Configuration File_v0.2.xlsx", "03"))

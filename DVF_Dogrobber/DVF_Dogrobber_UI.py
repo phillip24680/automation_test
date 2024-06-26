@@ -13,6 +13,7 @@ from PyQt5.QtCore import QTimer
 
 from tcp_client import send_data_to_server
 
+
 class ExecuteProcessThread(QThread):
     progress_updated = pyqtSignal(int)
     process_finished = pyqtSignal(bool)

@@ -1,8 +1,7 @@
 import socket
 import time
 
-from global_configuration import generate_commands_to_be_sent
-
+from global_configuration import generate_commands_dict
 
 def verify_response(response_str_list):
     return (
@@ -21,7 +20,7 @@ def send_data_to_server(excel_file):
         s.connect((SERVER_ADDRESS, SERVER_PORT))
 
         # 要发送的数据列表
-        commands_to_be_sent_dict = generate_commands_to_be_sent(excel_file)  # 假设的数据
+        commands_to_be_sent_dict = generate_commands_dict(excel_file)  # 假设的数据
 
         config_mode = "Fast"  # 默认值
         if "test scope" in commands_to_be_sent_dict:
@@ -40,13 +39,14 @@ def send_data_to_server(excel_file):
 
             try:
                 ack_response = s.recv(8)  # 尝试在1秒内读取最多8字节的数据
-                print(ack_response)
+                #print(ack_response)
                 if ack_response:
                     ack_response_str_list = [hex(byte)[2:].upper().zfill(2) for byte in ack_response]
                     if verify_response(ack_response_str_list):
                         print("receive data:")
                         print(ack_response_str_list)
                     else:
+                        print(ack_response_str_list)
                         s.close()
                         return config_mode + " configuration failed"
 
@@ -67,6 +67,7 @@ def send_data_to_server(excel_file):
                     if verify_response(notify_response_str_list):
                         print(notify_response_str_list)
                     else:
+                        print(notify_response_str_list)
                         s.close()
                         return config_mode + " configuration failed"
                 else:
