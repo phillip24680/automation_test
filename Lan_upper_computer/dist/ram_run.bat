@@ -1,1 +1,0 @@
-.\uuu.exe -b ram_burn_indus_fw.lst imx-boot D:\GitRepo\DINRailHubTestFirmware\wifi_check_nxp_imx8mp\armgcc\debug\wifi_check_test_app.bin

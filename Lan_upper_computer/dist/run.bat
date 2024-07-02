@@ -1,1 +1,0 @@
-.\uuu.exe -b ram_burn_indus_fw.lst imx-boot hal_eth_test_app.bin

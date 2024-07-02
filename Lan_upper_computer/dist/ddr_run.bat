@@ -1,1 +1,0 @@
-.\uuu.exe -b ddr_burn_indus_fw.lst imx-boot industrial_firmware_A_5_0_0.bin

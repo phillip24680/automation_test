@@ -315,7 +315,6 @@ class TCPClient(QWidget):
         else:
             print('Please select a file first')
 
-
     def show_progress_dialog(self):
         # 创建进度条弹窗
         self.progress_dialog = QProgressDialog(self)
@@ -324,7 +323,6 @@ class TCPClient(QWidget):
         self.progress_dialog.setLabelText('Loading...')
         self.progress_dialog.setRange(0, 100)
         self.progress_dialog.setValue(0)  # 设置初始值为0
-
 
         self.progress_dialog.show()
 

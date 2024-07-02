@@ -1,0 +1,1 @@
+.\uuu.exe -s -b emmc_burn_indus_fw_ddr.lst flash.bin industrial_firmware_A_7_0.bin                                                                                                                                                                                                                                        
