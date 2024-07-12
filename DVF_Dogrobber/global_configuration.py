@@ -96,7 +96,6 @@ def generate_commands_dict(excel_file):
         #print([format(num, '02X') for num in normal_commands_dict["Wi-Fi Scanning"]])
         return normal_commands_dict
 
-#print(generate_commands_dict("Lite DVF Configuration File_v0.2.xlsx"))
 
 
 

@@ -11,15 +11,23 @@ def int_number_to_int_list(string_number, byte_length):
     packed_bytes = struct.pack(f'<{byte_length}s', struct.pack('<i', string_number)[:byte_length])
     return [byte for byte in packed_bytes]
 
-def set_bits_from_reversed_string(bit_positions_str):
+def set_bits_from_reversed_string(bit_positions):
+    # 初始化一个16位全为0的二进制数
+    bit_string = '0' * 16
+
+    if isinstance(bit_positions, int):
+        bit_string = bit_string[:(16-bit_positions)] + '1' + bit_string[(16-bit_positions) + 1:]
+        # 分割二进制字符串，前8位为高位B，后8位为低位A
+        high_8_bits = bit_string[:8]
+        low_8_bits = bit_string[8:]
+
+        return [int(low_8_bits, 2), int(high_8_bits, 2)]
+
     # 将逗号分隔的字符串转换为整数列表，并确保在有效范围内
-    values = [16 - int(position.strip()) for position in bit_positions_str.split(',') if
+    values = [16 - int(position.strip()) for position in bit_positions.split(',') if
               1 <= int(position.strip()) <= 14]
     # 确保位置是唯一的并排序
     values = sorted(set(values))
-
-    # 初始化一个16位全为0的二进制数
-    bit_string = '0' * 16
 
     # 遍历有效值（逆序处理values，设置的是低位到高位）
     for value in values:
@@ -47,11 +55,16 @@ def calculate_crc_add_magicNumber(int_data_list):
 def generate_wifi_scan_request_command(wifi_check_sheet, moudle_id):
 
     Wifi_scan_subcommand = wifi_check_sheet.cell(row=4, column=2).value
-    Timeout = wifi_check_sheet.cell(row=4, column=7).value
-    Element_number = wifi_check_sheet.cell(row=5, column=7).value
-    SSID_length = len(wifi_check_sheet.cell(row=7, column=7).value)
-    SSID_string = wifi_check_sheet.cell(row=7, column=7).value
-    Channel_list = wifi_check_sheet.cell(row=8, column=7).value
+
+    Timeout = wifi_check_sheet.cell(row=4, column=7).value or wifi_check_sheet.cell(row=4, column=6).value
+
+    if type(Timeout) != int:
+        return ["Illegal parameters, please check!"]
+
+    Element_number = wifi_check_sheet.cell(row=5, column=7).value or wifi_check_sheet.cell(row=5, column=6).value
+    SSID_length = len(wifi_check_sheet.cell(row=7, column=7).value) or len(wifi_check_sheet.cell(row=7, column=6).value)
+    SSID_string = wifi_check_sheet.cell(row=7, column=7).value or wifi_check_sheet.cell(row=7, column=6).value
+    Channel_list = wifi_check_sheet.cell(row=8, column=7).value or wifi_check_sheet.cell(row=8, column=6).value
 
     #print(Channel_list)
 
@@ -96,4 +109,9 @@ def generate_wifi_check_request_command(excel_file, moudle_id):
     workbook.close()
     return wifi_check_command_dict
 
-#print(generate_wifi_check_request_command("Lite DVF Configuration File_v0.2.xlsx", "03"))
+#print(generate_wifi_check_request_command("Lite DVF Configuration File_v0.4.xlsx", "03"))
+
+#print(set_bits_from_reversed_string(10))
+
+
+

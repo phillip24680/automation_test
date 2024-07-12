@@ -33,7 +33,6 @@ class TCPClient(QWidget):
         self.setWindowTitle('DVF Dogrobber V1.0')
         self.resize(800, 400)
 
-
         # 添加图标
         self.icon_label = QLabel()
         self.icon_label.setPixmap(QPixmap('icon.png'))  # 替换为你的图标路径

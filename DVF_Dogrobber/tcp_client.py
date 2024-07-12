@@ -1,5 +1,6 @@
 import socket
 import time
+from datetime import datetime
 
 from global_configuration import generate_commands_dict
 
@@ -22,16 +23,20 @@ def send_data_to_server(excel_file):
         # 要发送的数据列表
         commands_to_be_sent_dict = generate_commands_dict(excel_file)  # 假设的数据
 
+        for key, val in commands_to_be_sent_dict.items():
+            if val == ["Illegal parameters, please check!"]:
+                return key + ":" + " " + "Illegal parameters, please check!"
+
         config_mode = "Fast"  # 默认值
         if "test scope" in commands_to_be_sent_dict:
             config_mode = "Normal"
 
         # 发送数据并验证响应
-        for value in commands_to_be_sent_dict.values():
+        for key, val in commands_to_be_sent_dict.items():
             # 发送数据
             print("send data:")
-            print([format(num, '02X') for num in value])
-            s.sendall(bytes(value))
+            print([format(num, '02X') for num in val])
+            s.sendall(bytes(val))
 
             #time.sleep(3)
             # 接收响应，这里假设服务器会立即回复，并且回复数据不大
@@ -48,7 +53,7 @@ def send_data_to_server(excel_file):
                     else:
                         print(ack_response_str_list)
                         s.close()
-                        return config_mode + " configuration failed"
+                        return config_mode + " configuration failed" + "\n" + "\n" + "Failed item: " + key
 
                 else:
                     print("ack_response回复为空")
