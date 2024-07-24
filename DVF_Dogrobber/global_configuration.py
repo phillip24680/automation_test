@@ -2,6 +2,7 @@ from openpyxl import load_workbook
 import struct
 
 from wifi_check import generate_wifi_check_request_command
+from button_control import generate_button_control_request_command
 
 #V1.0
 
@@ -81,6 +82,9 @@ def generate_commands_dict(excel_file):
             wifi_fast_commands_dict = generate_wifi_check_request_command(excel_file, test_suite_imformation["Wi-Fi Check"]["Corresponding Command ID"])
             fast_commands_dict.update(wifi_fast_commands_dict)
         #print([format(num, '02X') for num in fast_commands_dict["Wi-Fi Scanning"]])
+        if test_suite_imformation["Button Control"]["Global Fast Config"] == "Y":
+            button_control_fast_commands_dict = generate_button_control_request_command(excel_file, test_suite_imformation["Button Control"]["Corresponding Command ID"])
+            fast_commands_dict.update(button_control_fast_commands_dict)
         return fast_commands_dict
     else:
         normal_commands_dict = {"test scope":[]}
@@ -91,12 +95,17 @@ def generate_commands_dict(excel_file):
             wifi_normal_commands_dict.pop("test scope")  #删除字典中"test scope"元素
             normal_commands_dict.update(wifi_normal_commands_dict)
 
+        if test_suite_imformation["Button Control"]["Global Execution Option"] == "Y":
+            button_control_normal_commands_dict = generate_button_control_request_command(excel_file, test_suite_imformation["Button Control"]["Corresponding Command ID"])
+            normal_commands_dict["test scope"] = normal_commands_dict["test scope"] + [0, 126]
+            normal_commands_dict.update(button_control_normal_commands_dict)
+
         process_test_scope_commands(normal_commands_dict["test scope"])
         #print([format(num, '02X') for num in normal_commands_dict["test scope"]])
         #print([format(num, '02X') for num in normal_commands_dict["Wi-Fi Scanning"]])
         return normal_commands_dict
 
+print(generate_commands_dict("Lite DVF Configuration File_v0.5.xlsx"))
 
-
-
+#print(get_test_suite_imformation("Lite DVF Configuration File_v0.5.xlsx"))
 
